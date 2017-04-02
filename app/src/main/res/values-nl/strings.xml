@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="description_main">er is niemand die van pijn zelf houdt, die het zoekt en die het</string>
+    <string name="description_second">er is niemand die van pijn zelf houdt, die het zoekt en die het</string>
+    <string name="description_third">er is niemand die van pijn zelf houdt, die het zoekt en die het</string>
+    <string name="dark">donker</string>
+    <string name="large_size">groot</string>
+    <string name="light">licht</string>
+    <string name="new_apps">nieuwe</string>
+    <string name="next">Volgende</string>
+    <string name="popular">populair</string>
+    <string name="standart_size">standaard</string>
+</resources>

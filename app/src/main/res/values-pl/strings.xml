@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="description_main">kto lubiłby ból dla samego bólu, szukał go tylko po to, by go poczuć</string>
+    <string name="description_second">kto lubiłby ból dla samego bólu, szukał go tylko po to, by go poczuć</string>
+    <string name="description_third">kto lubiłby ból dla samego bólu, szukał go tylko po to, by go poczuć</string>
+    <string name="dark">ciemny</string>
+    <string name="large_size">wielki</string>
+    <string name="light">jasny</string>
+    <string name="new_apps">nowy</string>
+    <string name="next">Dalej</string>
+    <string name="popular">oglądane</string>
+    <string name="standart_size">standard</string>
+</resources>

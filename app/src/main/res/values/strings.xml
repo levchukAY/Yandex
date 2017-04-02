@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name" translatable="false">KILauncher</string>
+    <string name="next">Next</string>
+    <string name="description_main">lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
+    <string name="description_second">lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
+    <string name="description_third">lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
+
+    <string name="choose_size" translatable="false">Размер</string>
+    <string name="standart_size">standard</string>
+    <string name="large_size">large</string>
+    <string name="choose_theme" translatable="false">Цветовая схема</string>
+    <string name="light">light</string>
+    <string name="dark">dark</string>
+
+    <string name="app_title" translatable="false">%X</string>
+    <string name="new_apps">new</string>
+    <string name="popular">popular</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="description_main">det er ingen som elsker smerte i seg selv, som søker og ønsker det</string>
+    <string name="description_second">det er ingen som elsker smerte i seg selv, som søker og ønsker det</string>
+    <string name="description_third">det er ingen som elsker smerte i seg selv, som søker og ønsker det</string>
+    <string name="dark">mørk</string>
+    <string name="large_size">stor</string>
+    <string name="light">laight</string>
+    <string name="new_apps">ny</string>
+    <string name="next">Neste</string>
+    <string name="popular">populær</string>
+    <string name="standart_size">standard</string>
+</resources>

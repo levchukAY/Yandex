@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="description_main">در اندوه لورم نشستن آمت، بسیار آسان</string>
+    <string name="description_second">در اندوه لورم نشستن آمت، بسیار آسان</string>
+    <string name="description_third">در اندوه لورم نشستن آمت، بسیار آسان</string>
+    <string name="dark">تاریک</string>
+    <string name="large_size">بزرگ</string>
+    <string name="light">سبک</string>
+    <string name="new_apps">جدید</string>
+    <string name="next">بعد</string>
+    <string name="popular">محبوب</string>
+    <string name="standart_size">استاندارد</string>
+</resources>

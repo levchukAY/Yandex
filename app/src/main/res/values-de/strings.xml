@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dark">dunkel</string>
+    <string name="large_size">groß</string>
+    <string name="light">licht</string>
+    <string name="new_apps">neu</string>
+    <string name="next">Nächster</string>
+    <string name="popular">beliebt</string>
+    <string name="standart_size">standard</string>
+    <string name="description_main">da ist niemand der den Schmerz an sich liebt</string>
+    <string name="description_second">da ist niemand der den Schmerz an sich liebt</string>
+    <string name="description_third">da ist niemand der den Schmerz an sich liebt</string>
+</resources>

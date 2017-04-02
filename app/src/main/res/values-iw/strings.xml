@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="description_main">מה הבאים משחקים שינויים היא, עזה גם והוא נפלו שדרות</string>
+    <string name="description_second">מה הבאים משחקים שינויים היא, עזה גם והוא נפלו שדרות</string>
+    <string name="description_third">מה הבאים משחקים שינויים היא, עזה גם והוא נפלו שדרות</string>
+    <string name="dark">אפל</string>
+    <string name="large_size">גָדוֹל</string>
+    <string name="light">אוֹר</string>
+    <string name="new_apps">חָדָשׁ</string>
+    <string name="next">הַבָּא</string>
+    <string name="popular">פופולרי</string>
+    <string name="standart_size">תקן</string>
+</resources>

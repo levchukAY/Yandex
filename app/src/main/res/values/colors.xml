@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#CDDC39</color>
+    <color name="colorPrimaryDark">#AFB42B</color>
+    <color name="colorPrimaryLight">#F0F4C3</color>
+    <color name="colorAccent">#FF9800</color>
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#757575</color>
+    <color name="colorDivider">#BDBDBD</color>
+
+    <color name="colorPrimaryInverse">#AFB42B</color>
+    <color name="colorPrimaryDarkInverse">#827717</color>
+    <color name="colorPrimaryLightInverse">#CDDC39</color>
+    <color name="textColorPrimaryInverse">#DEDEDE</color>
+    <color name="textColorSecondaryInverse">#8A8A8A</color>
+    <color name="colorDividerInverse">#424242</color>
+
+
+    <color name="iconColor">#000000</color>
+
+</resources>

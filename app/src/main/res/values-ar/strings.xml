@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dark">داكن</string>
+    <string name="description_main">عرض جديدة استطاعوا في, أم وفي جمعت الأوضاع, مدن تم قررت لأداء التبرعات</string>
+    <string name="description_second">عرض جديدة استطاعوا في, أم وفي جمعت الأوضاع, مدن تم قررت لأداء التبرعات</string>
+    <string name="description_third">عرض جديدة استطاعوا في, أم وفي جمعت الأوضاع, مدن تم قررت لأداء التبرعات</string>
+    <string name="large_size">كبير</string>
+    <string name="light">ضوء</string>
+    <string name="next">التالى</string>
+    <string name="new_apps">الجديد</string>
+    <string name="popular">جمع</string>
+    <string name="standart_size">معيار</string>
+</resources>

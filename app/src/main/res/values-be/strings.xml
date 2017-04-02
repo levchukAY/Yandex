@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="standart_size">стандартны</string>
+    <string name="popular">папулярныя</string>
+    <string name="next">Далей</string>
+    <string name="new_apps">новыя</string>
+    <string name="light">свелы</string>
+    <string name="large_size">вялікі</string>
+    <string name="dark">цёмны</string>
+    <string name="description_main">лорэм іпсум долор сіт амэт, пер цліта поссіт эх</string>
+    <string name="description_second">лорэм іпсум долор сіт амэт, пер цліта поссіт эх</string>
+    <string name="description_third">лорэм іпсум долор сіт амэт, пер цліта поссіт эх</string>
+</resources>

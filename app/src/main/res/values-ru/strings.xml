@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dark">тёмный</string>
+    <string name="description_main">лорем ипсум долор сит амет, вим алияуип пондерум импердиет еи</string>
+    <string name="description_second">лорем ипсум долор сит амет, вим алияуип пондерум импердиет еи</string>
+    <string name="description_third">лорем ипсум долор сит амет, вим алияуип пондерум импердиет еи</string>
+    <string name="large_size">большой</string>
+    <string name="standart_size">стандартный</string>
+    <string name="light">светлый</string>
+    <string name="new_apps">новые</string>
+    <string name="next">Далее</string>
+    <string name="popular">популярные</string>
+</resources>
