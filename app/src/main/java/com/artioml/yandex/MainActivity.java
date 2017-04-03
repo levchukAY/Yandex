@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
 import java.util.ArrayList;
@@ -36,13 +37,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //setTheme(R.style.AppTheme_Dark);
-
-        UiModeManager uiManager = (UiModeManager) getSystemService(UI_MODE_SERVICE);
-        //uiManager.enableCarMode(UiModeManager.ENABLE_CAR_MODE_GO_CAR_HOME);
-        //uiManager.setNightMode(UiModeManager.MODE_NIGHT_NO);
-        //setTheme(R.style.AppTheme_Dark);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -61,48 +55,49 @@ public class MainActivity extends AppCompatActivity {
             if(getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
                 mViewPager.setRotationY(180);
 
-        //mViewPager.setTranslationX(-1 * mViewPager.getWidth() * position);
-
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
         tabLayout.setupWithViewPager(mViewPager, true);
 
         final Button nextButton = (Button) findViewById(R.id.nextButton);
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int position = mViewPager.getCurrentItem();
-                if (position < 3)
-                    mViewPager.setCurrentItem(position + 1);
-                else {
-                    boolean isLarge = ((RadioButton) findViewById(R.id.radioButton2)).isChecked();
-                    boolean isDark = ((RadioButton) findViewById(R.id.radioButton4)).isChecked();
-                    ArrayList<Integer> icons = new ArrayList<>();
-                    ArrayList<Integer> positions = new ArrayList<>();
-                    ArrayList<Integer> nums = new ArrayList<>();
-                    for (int i = 0; i < 16; i++)
-                        nums.add(i);
-                    for (int i = 0; i < 10; i++) {
-                        Collections.shuffle(nums);
-                        for (int j = 0; j < 16; j++) {
-                            icons.add(nums.get(j));
-                            positions.add(i * 16 + j);
-                        }
-                    }
-                    Intent desktopIntent = new Intent(MainActivity.this, DesktopActivity.class);
-                    desktopIntent.putExtra("size", isLarge);
-                    desktopIntent.putExtra("theme", isDark);
-                    desktopIntent.putIntegerArrayListExtra("icons", icons);
-                    desktopIntent.putIntegerArrayListExtra("positions", positions);
-                    desktopIntent.putIntegerArrayListExtra("popular_keys", new ArrayList<Integer>());
-                    desktopIntent.putIntegerArrayListExtra("popular_vals", new ArrayList<Integer>());
-                    desktopIntent.putIntegerArrayListExtra("deleted", new ArrayList<Integer>());
-                    startActivity(desktopIntent);
-                    finish();
-                }
-            }
-        });
-
+        nextButton.setOnClickListener(nextButtonListener);
     }
+
+    final View.OnClickListener nextButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            int position = mViewPager.getCurrentItem();
+            if (position < 3)
+                mViewPager.setCurrentItem(position + 1);
+            else {
+                boolean isLarge = ((RadioButton) findViewById(R.id.radioButton2)).isChecked();
+                boolean isDark = ((RadioButton) findViewById(R.id.radioButton4)).isChecked();
+                Intent desktopIntent = new Intent(MainActivity.this, DesktopActivity.class);
+                desktopIntent.putExtra("size", isLarge);
+                desktopIntent.putExtra("theme", isDark);
+                desktopIntent.putIntegerArrayListExtra("popular_keys", new ArrayList<Integer>());
+                desktopIntent.putIntegerArrayListExtra("popular_vals", new ArrayList<Integer>());
+                desktopIntent.putIntegerArrayListExtra("deleted", new ArrayList<Integer>());
+                startActivity(desktopIntent);
+                finish();
+            }
+        }
+    };
+
+    final CompoundButton.OnCheckedChangeListener onCheckedChangeListener =
+            new CompoundButton.OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    switch (compoundButton.getId()) {
+                        case R.id.radioButton3:
+                            setTheme(R.style.AppTheme);
+                            break;
+                        case R.id.radioButton4:
+                            setTheme(R.style.AppTheme_Dark);
+                            break;
+                    }
+                }
+            };
 
     public static class PlaceholderFragment extends Fragment {
 
@@ -136,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 3:
                     rootView = inflater.inflate(R.layout.fragment_4, container, false);
+
                     break;
             }
             if (Build.VERSION.SDK_INT >= 17)
@@ -199,43 +195,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    /*public class DepthPageTransformer implements ViewPager.PageTransformer {
-        private static final float MIN_SCALE = 0.75f;
-
-        public void transformPage(View view, float position) {
-            int pageWidth = view.getWidth();
-
-            if (position < -1) { // [-Infinity,-1)
-                // This page is way off-screen to the left.
-                view.setAlpha(0);
-
-            } else if (position <= 0) { // [-1,0]
-                // Use the default slide transition when moving to the left page
-                view.setAlpha(1);
-                view.setTranslationX(0);
-                view.setScaleX(1);
-                view.setScaleY(1);
-
-            } else if (position <= 1) { // (0,1]
-                // Fade the page out.
-                view.setAlpha(1 - position);
-
-                // Counteract the default slide transition
-                view.setTranslationX(pageWidth * -position);
-
-                // Scale the page down (between MIN_SCALE and 1)
-                float scaleFactor = MIN_SCALE
-                        + (1 - MIN_SCALE) * (1 - Math.abs(position));
-                view.setScaleX(scaleFactor);
-                view.setScaleY(scaleFactor);
-
-            } else { // (1,+Infinity]
-                // This page is way off-screen to the right.
-                view.setAlpha(0);
-            }
-        }
-    }*/
 
     /*public boolean isRTL(Context ctx) {
         Configuration config = ctx.getResources().getConfiguration();

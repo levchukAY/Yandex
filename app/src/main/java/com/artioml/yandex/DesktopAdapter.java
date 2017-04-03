@@ -15,21 +15,17 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
+class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
 
-    private static final int mod = 14;
+    private static final int MOD = 20;
 
     private ArrayList<Integer> popular, newIcons, popularKeys, popularVals, deleted;
-    //private ClickMap clicked;
     private ClickList clicked;
     private Context context;
     private int cols, iconHeight;
 
-    //TextView textView;
-
-    DesktopAdapter(Context context, ArrayList<Integer> icons, ArrayList<Integer> positions,
-                   ArrayList<Integer> popularKeys, ArrayList<Integer> popularVals,
-                   ArrayList<Integer> deleted ,int cols, int iconHeight/*, TextView textView*/) {
+    DesktopAdapter(Context context, ArrayList<Integer> popularKeys, ArrayList<Integer> popularVals,
+                   ArrayList<Integer> deleted ,int cols, int iconHeight) {
         this.context = context;
         this.cols = cols;
         this.iconHeight = iconHeight;
@@ -41,7 +37,10 @@ public class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHold
 
         clicked = new ClickList(popularKeys, popularVals);
         popular = getPopular();
-        newIcons = (ArrayList<Integer>) positions.clone();
+
+        newIcons = new ArrayList<>();
+        for (int i = 0; i < cols; i++)
+            newIcons.add(getPosition(i));
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -69,48 +68,47 @@ public class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHold
                     }
                 });
 
-                iconImageView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-                    @Override
-                    public void onCreateContextMenu(ContextMenu contextMenu, View view,
-                                                    ContextMenu.ContextMenuInfo contextMenuInfo) {
-                        contextMenu.add("info").setOnMenuItemClickListener(
-                                new MenuItem.OnMenuItemClickListener() {
-                                    @Override
-                                    public boolean onMenuItemClick(MenuItem menuItem) {
-                                        String title = titleTextView.getText().toString();
-                                        Toast toast = Toast.makeText(context, title, Toast.LENGTH_SHORT);
-                                        toast.show();
-                                        return true;
-                                    }
-                                }
-                        );
-                        if (position > 2 * cols + 1)
-                            contextMenu.add("delete").setOnMenuItemClickListener(
-                                    new MenuItem.OnMenuItemClickListener() {
-                                        @Override
-                                        public boolean onMenuItemClick(MenuItem menuItem) {
-                                            String title = titleTextView.getText().toString();
-                                            int n = Integer.parseInt(title, 16) - 1;
-                                            clicked.rem(n);
-                                            deleted.add(n);
-                                            Collections.sort(deleted);
-                                            DesktopAdapter.this.notifyDataSetChanged();
-                                            return true;
-                                        }
-                                    }
-                            );
-                        // доделать
-                    }
-                });
+                iconImageView.setOnCreateContextMenuListener(menuListener);
             }
         }
+
+        final View.OnCreateContextMenuListener menuListener = new View.OnCreateContextMenuListener() {
+            @Override
+            public void onCreateContextMenu(ContextMenu contextMenu, View view,
+                                            ContextMenu.ContextMenuInfo contextMenuInfo) {
+                contextMenu.add("info").setOnMenuItemClickListener(
+                        new MenuItem.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem menuItem) {
+                                String title = titleTextView.getText().toString();
+                                Toast toast = Toast.makeText(context, title, Toast.LENGTH_SHORT);
+                                toast.show();
+                                return true;
+                            }
+                        }
+                );
+                if (position > 2 * cols + 1)
+                    contextMenu.add("delete").setOnMenuItemClickListener(
+                            new MenuItem.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem menuItem) {
+                                    String title = titleTextView.getText().toString();
+                                    int n = Integer.parseInt(title, 16) - 1;
+                                    clicked.rem(n);
+                                    deleted.add(n);
+                                    Collections.sort(deleted);
+                                    DesktopAdapter.this.notifyDataSetChanged();
+                                    return true;
+                                }
+                            }
+                    );
+            }
+        };
 
         private void setPosition(int position) {
             this.position = position;
         }
     }
-
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -138,21 +136,20 @@ public class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHold
             holder.titleTextView.setText(context.getResources().getString(
                     R.string.app_title, popular.get(position - 1) + 1));
             holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, context.getResources().
-                    getIdentifier("ic_" + popular.get(position - 1) % mod, "drawable", context.getPackageName())));
+                    getIdentifier("ic_" + popular.get(position - 1) % MOD, "drawable", context.getPackageName())));
         } else if (position < 2 * cols + 2) {
             position -= cols + 2;
-            position = getPosition(position);
             holder.titleTextView.setText(context.getResources().getString(
-                    R.string.app_title, position + 1));
+                    R.string.app_title, newIcons.get(position) + 1));
             holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, context.getResources().
-                    getIdentifier("ic_" + position % mod, "drawable", context.getPackageName())));
+                    getIdentifier("ic_" + newIcons.get(position) % MOD, "drawable", context.getPackageName())));
         } else {
             position -= 2 * cols + 2;
             position = getPosition(position);
             holder.titleTextView.setText(context.getResources().getString(
                     R.string.app_title, position + 1));
             holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, context.getResources().
-                    getIdentifier("ic_" + position % mod, "drawable", context.getPackageName())));
+                    getIdentifier("ic_" + position % MOD, "drawable", context.getPackageName())));
         }
     }
 
@@ -176,20 +173,11 @@ public class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHold
              return position;
          }
          return 0;
-       /*if (getItemViewType(position) == 1)
-            return -1;
-        if (position > cols)
-            position--;*/
-        // return super.getItemId(position);
     }
 
 
     private ArrayList<Integer> getPopular() {
         ArrayList<Integer> res = new ArrayList<>();
-        /*ArrayList<Icon> icons = new ArrayList<>();
-        for (Integer i : clicked.keySet())
-            icons.add(new Icon(i, clicked.get(i)));
-        Collections.sort(icons);*/
         for (int i = 0; res.size() != cols && i < clicked.size(); i++)
             res.add(clicked.get(i).id);
         int n;
@@ -199,17 +187,6 @@ public class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHold
                 res.add(n);
         }
         return res;
-        /*ArrayList<Integer> res = new ArrayList<>();
-        ArrayList<Icon> icons = new ArrayList<>();
-        for (Integer i : clicked.keySet())
-            icons.add(new Icon(i, clicked.get(i)));
-        PriorityQueue<Icon> queue = new PriorityQueue<>(icons);
-        while (res.size() != cols && !queue.isEmpty())
-            res.add(queue.poll().id);
-        for (int i = 0; res.size() != cols; i++)
-            if (!res.contains(positions.get(i)))
-                res.add(positions.get(i));
-        return res;*/
     }
 
     void savePopular() {
@@ -221,28 +198,7 @@ public class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHold
         }
     }
 
-
-    /*class Icon implements Comparable<Icon> {
-
-        protected int id, count;
-
-        Icon(int id, int count) {
-            this.id = id;
-            this.count = count;
-        }
-
-        void inc() {
-            count++;
-        }
-
-        @Override
-        public int compareTo(Icon icon) {
-            return icon.count - count;
-        }
-
-    }*/
-
-    int getPosition(int position) {
+    private int getPosition(int position) {
         for (int i : deleted)
             if (position >= i)
                 position++;
@@ -252,13 +208,13 @@ public class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHold
 
 }
 
-// добавить картинок
-// добавить delete во все случаи
-// убрать обновление для new
+// локализация
+// закругленные иконки
 
-//+ бесконечный скроллинг? (integer maxsize)
 // темная тема
-
+// добавить delete во все случаи (не надо)
+// убрать обновление для new
+//+ бесконечный скроллинг? (integer maxsize)
 //+ можно ли назад передвигаться между фрагментами и активити? (только по кнопке) (finish in intent)
 //+ языки - нет цифр? (фарси)
 //+ можно ли с нуля нумеровать (только с 1)

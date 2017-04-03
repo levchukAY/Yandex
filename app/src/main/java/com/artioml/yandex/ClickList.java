@@ -1,21 +1,17 @@
 package com.artioml.yandex;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 
-/**
- * Created by Artiom L on 31.03.2017.
- */
-
 class ClickList extends ArrayList<ClickList.Icon> {
-
-    ClickList() { }
 
     ClickList (ArrayList<Integer> keys, ArrayList<Integer> values) {
         for (int i = 0; i < keys.size(); i++)
             add(new Icon(keys.get(i), values.get(i)));
     }
 
-    void add(int id, int value) {
+    private void add(int id, int value) {
         add(new Icon(id, value));
     }
 
@@ -32,13 +28,13 @@ class ClickList extends ArrayList<ClickList.Icon> {
             for (int i = index - 1; i >= 0 && get(i).count <= get(i + 1).count; i--) {
                 id_ = get(i + 1).id;
                 count = get(i + 1).count;
-                get(i + 1).set(get(i));
+                get(i + 1).set(get(i).id, get(i).count);
                 get(i).set(id_, count);
             }
         }
     }
 
-    void rem(int id) {
+    void rem (int id) {
         for (int i = 0; i < size(); i++)
             if (get(i).id == id) {
                 remove(i);
@@ -48,14 +44,14 @@ class ClickList extends ArrayList<ClickList.Icon> {
 
     class Icon implements Comparable<Icon> {
 
-        protected int id, count;
+        int id, count;
 
         Icon (int id, int count) {
             this.id = id;
             this.count = count;
         }
 
-        void set (int id, int count) {
+        void set(int id, int count) {
             this.id = id;
             this.count = count;
         }
@@ -64,13 +60,8 @@ class ClickList extends ArrayList<ClickList.Icon> {
             count++;
         }
 
-        void set (Icon icon) {
-            this.id = icon.id;
-            this.count = icon.count;
-        }
-
         @Override
-        public int compareTo(Icon icon) {
+        public int compareTo(@NonNull Icon icon) {
             return icon.count - count;
         }
 

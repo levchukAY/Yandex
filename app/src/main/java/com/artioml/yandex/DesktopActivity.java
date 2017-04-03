@@ -1,5 +1,6 @@
 package com.artioml.yandex;
 
+import android.app.UiModeManager;
 import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -25,11 +26,10 @@ public class DesktopActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_desktop);
 
-        if (getIntent().getBooleanExtra("theme", false)) {
+        if (getIntent().getBooleanExtra("theme", false))
             setTheme(R.style.AppTheme_Dark);
-        }
+        setContentView(R.layout.activity_desktop);
 
         int cols = 6;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
@@ -40,7 +40,7 @@ public class DesktopActivity extends AppCompatActivity {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int iconHeight = metrics.widthPixels / cols - 33 * metrics.densityDpi / 160;
+        int iconHeight = metrics.widthPixels / cols - 29 * metrics.densityDpi / 160;
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         GridLayoutManager layout = new GridLayoutManager(this, cols);
@@ -56,13 +56,12 @@ public class DesktopActivity extends AppCompatActivity {
 
         recyclerView.setLayoutManager(layout);
 
-        adapter = new DesktopAdapter(getApplicationContext(),
-                getIntent().getIntegerArrayListExtra("icons"),
-                getIntent().getIntegerArrayListExtra("positions"),
+        adapter = new DesktopAdapter(
+                getApplicationContext(),
                 getIntent().getIntegerArrayListExtra("popular_keys"),
                 getIntent().getIntegerArrayListExtra("popular_vals"),
                 getIntent().getIntegerArrayListExtra("deleted"),
-                cols, iconHeight/*, (TextView) findViewById(R.id.textView)*/);
+                cols, iconHeight);
         recyclerView.setAdapter(adapter);
 
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
