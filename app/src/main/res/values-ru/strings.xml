@@ -10,4 +10,8 @@
     <string name="new_apps">новые</string>
     <string name="next">Далее</string>
     <string name="popular">популярные</string>
+    <string name="choose_size">Иконок в строке</string>
+    <string name="choose_theme">Тема</string>
+    <string name="delete">удалить</string>
+    <string name="info">информация</string>
 </resources>

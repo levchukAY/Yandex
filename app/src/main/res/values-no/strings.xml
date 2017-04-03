@@ -10,4 +10,8 @@
     <string name="next">Neste</string>
     <string name="popular">populær</string>
     <string name="standart_size">standard</string>
+    <string name="choose_size">Ikoner per linje</string>
+    <string name="choose_theme">Tema</string>
+    <string name="delete">slette</string>
+    <string name="info">informasjon</string>
 </resources>

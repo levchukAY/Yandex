@@ -10,4 +10,8 @@
     <string name="new_apps">الجديد</string>
     <string name="popular">جمع</string>
     <string name="standart_size">معيار</string>
+    <string name="choose_size">أيقونات في كل سطر</string>
+    <string name="choose_theme">المقدمة</string>
+    <string name="delete">حذف</string>
+    <string name="info">معلومات</string>
 </resources>

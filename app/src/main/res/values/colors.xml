@@ -15,7 +15,7 @@
     <color name="textColorSecondaryInverse">#8A8A8A</color>
     <color name="colorDividerInverse">#424242</color>
 
-
     <color name="iconColor">#000000</color>
+    <color name="iconBackground">@color/textColorSecondaryInverse</color>
 
 </resources>

@@ -20,17 +20,17 @@ class ClickList extends ArrayList<ClickList.Icon> {
         for (int i = 0; i < size(); i++)
             if (get(i).id == id)
                 index = i;
-        if (index == -1)
-            add(id, 1);
-        else {
-            get(index).inc();
-            int id_, count;
-            for (int i = index - 1; i >= 0 && get(i).count <= get(i + 1).count; i--) {
-                id_ = get(i + 1).id;
-                count = get(i + 1).count;
-                get(i + 1).set(get(i).id, get(i).count);
-                get(i).set(id_, count);
-            }
+        if (index == -1) {
+            index = size();
+            add(id, 0);
+        }
+        get(index).inc();
+        int id_, count;
+        for (int i = index - 1; i >= 0 && get(i).count <= get(i + 1).count; i--) {
+            id_ = get(i + 1).id;
+            count = get(i + 1).count;
+            get(i + 1).set(get(i).id, get(i).count);
+            get(i).set(id_, count);
         }
     }
 

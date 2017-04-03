@@ -10,14 +10,15 @@
         app:srcCompat="@drawable/ic_0"
         android:id="@+id/iconImageView"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+        android:layout_width="match_parent"
+        android:background="@drawable/rounded_corners"
+        android:padding="2dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:id="@+id/titleTextView"
         android:gravity="center"
         android:textColor="?attr/android:textColorPrimary"
-        tools:text="vghbj"
         android:textSize="12sp"
         android:layout_height="13dp" />
 </LinearLayout>

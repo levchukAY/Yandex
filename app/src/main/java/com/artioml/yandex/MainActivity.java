@@ -1,18 +1,12 @@
 package com.artioml.yandex;
 
-import android.app.UiModeManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.IntegerRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -25,12 +19,9 @@ import android.widget.RadioButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 
     @Override
@@ -38,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -57,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
         tabLayout.setupWithViewPager(mViewPager, true);
+        tabLayout.setClickable(false);
 
         final Button nextButton = (Button) findViewById(R.id.nextButton);
         nextButton.setOnClickListener(nextButtonListener);
@@ -72,22 +64,27 @@ public class MainActivity extends AppCompatActivity {
                 boolean isLarge = ((RadioButton) findViewById(R.id.radioButton2)).isChecked();
                 boolean isDark = ((RadioButton) findViewById(R.id.radioButton4)).isChecked();
 
-                ArrayList<Integer> nums = new ArrayList<>();
-                for (int i = 0; i < 20; i++)
-                    nums.add(i);
+                ArrayList<Integer> nums1 = new ArrayList<>();
+                ArrayList<Integer> nums2 = new ArrayList<>();
+                for (int i = 0; i < 10; i++) {
+                    nums1.add(i);
+                    nums2.add(i + 10);
+                }
                 ArrayList<Integer> icons = new ArrayList<>();
                 for (int i = 0; i < 100; i++) {
-                    Collections.shuffle(icons);
-                    icons.addAll(nums);
+                    Collections.shuffle(nums1);
+                    Collections.shuffle(nums2);
+                    icons.addAll(nums1);
+                    icons.addAll(nums2);
                 }
 
                 Intent desktopIntent = new Intent(MainActivity.this, DesktopActivity.class);
-                desktopIntent.putExtra("size", isLarge);
-                desktopIntent.putExtra("theme", isDark);
                 desktopIntent.putIntegerArrayListExtra("popular_keys", new ArrayList<Integer>());
                 desktopIntent.putIntegerArrayListExtra("popular_vals", new ArrayList<Integer>());
                 desktopIntent.putIntegerArrayListExtra("deleted", new ArrayList<Integer>());
                 desktopIntent.putIntegerArrayListExtra("icons", icons);
+                desktopIntent.putExtra("size", isLarge);
+                desktopIntent.putExtra("theme", isDark);
                 startActivity(desktopIntent);
                 finish();
             }

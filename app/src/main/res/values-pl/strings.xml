@@ -10,4 +10,8 @@
     <string name="next">Dalej</string>
     <string name="popular">oglądane</string>
     <string name="standart_size">standard</string>
+    <string name="choose_size">Ikony w wierszu</string>
+    <string name="choose_theme">Motyw</string>
+    <string name="delete">kasować</string>
+    <string name="info">informacja</string>
 </resources>

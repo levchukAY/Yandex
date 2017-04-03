@@ -22,7 +22,8 @@
             android:textColor="?attr/android:textColorPrimary"
             android:textSize="18sp"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:gravity="center" />
 
         <RadioGroup
             android:layout_width="match_parent"
@@ -81,7 +82,8 @@
             android:textColor="?attr/android:textColorPrimary"
             android:textSize="18sp"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin" />
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:gravity="center" />
 
         <RadioGroup
             android:layout_width="match_parent"

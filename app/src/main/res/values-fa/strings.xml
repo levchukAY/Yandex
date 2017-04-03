@@ -10,4 +10,8 @@
     <string name="next">بعد</string>
     <string name="popular">محبوب</string>
     <string name="standart_size">استاندارد</string>
+    <string name="choose_size">آیکن در هر خط</string>
+    <string name="choose_theme">موضوع</string>
+    <string name="delete">حذف</string>
+    <string name="info">اطلاعات</string>
 </resources>

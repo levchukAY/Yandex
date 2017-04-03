@@ -5,14 +5,17 @@
     <string name="description_second">lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
     <string name="description_third">lorem ipsum dolor sit amet, consectetur adipiscing elit</string>
 
-    <string name="choose_size" translatable="false">Размер</string>
+    <string name="choose_size">Icons per line</string>
     <string name="standart_size">standard</string>
     <string name="large_size">large</string>
-    <string name="choose_theme" translatable="false">Цветовая схема</string>
+    <string name="choose_theme">Theme</string>
     <string name="light">light</string>
     <string name="dark">dark</string>
 
     <string name="app_title" translatable="false">%X</string>
     <string name="new_apps">new</string>
     <string name="popular">popular</string>
+
+    <string name="delete">delete</string>
+    <string name="info">info</string>
 </resources>

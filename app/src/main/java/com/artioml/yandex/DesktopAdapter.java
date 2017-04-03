@@ -1,6 +1,7 @@
 package com.artioml.yandex;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -17,7 +18,7 @@ import java.util.Collections;
 
 class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
 
-    private static final int MOD = 2000;
+    private static int MOD;
 
     private ArrayList<Integer> popular, newIcons, popularKeys, popularVals, deleted, icons;
     private ClickList clicked;
@@ -33,7 +34,7 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
         this.popularVals = popularVals;
         this.deleted = deleted;
         this.icons = icons;
-
+        MOD = icons.size();
         setHasStableIds(true); // for animation
 
         clicked = new ClickList(popularKeys, popularVals);
@@ -57,6 +58,8 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
 
             if (viewType == 0) {
                 iconImageView = (ImageView) itemView.findViewById(R.id.iconImageView);
+                if (Build.VERSION.SDK_INT >= 21)
+                    iconImageView.setClipToOutline(true);
                 iconImageView.setMinimumHeight(iconHeight);
 
                 iconImageView.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +80,8 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
             @Override
             public void onCreateContextMenu(ContextMenu contextMenu, View view,
                                             ContextMenu.ContextMenuInfo contextMenuInfo) {
-                contextMenu.add("info").setOnMenuItemClickListener(
+                contextMenu.add(context.getResources().getString(
+                        R.string.info)).setOnMenuItemClickListener(
                         new MenuItem.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -89,7 +93,8 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
                         }
                 );
                 if (position > 2 * cols + 1)
-                    contextMenu.add("delete").setOnMenuItemClickListener(
+                    contextMenu.add(context.getResources().getString(
+                            R.string.delete)).setOnMenuItemClickListener(
                             new MenuItem.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem menuItem) {
@@ -109,6 +114,7 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
         private void setPosition(int position) {
             this.position = position;
         }
+
     }
 
     @Override
@@ -176,7 +182,6 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
          return 0;
     }
 
-
     private ArrayList<Integer> getPopular() {
         ArrayList<Integer> res = new ArrayList<>();
         for (int i = 0; res.size() != cols && i < clicked.size(); i++)
@@ -210,7 +215,6 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
 }
 
 // локализация
-// закругленные иконки
 
 // темная тема
 // добавить delete во все случаи (не надо)
@@ -224,6 +228,7 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
 
 
 // Как сделать некриво?
+// закругленные иконки
 //+ как запоминать популярные? (Shared)
 // числа в 16сс в персидском
 // как определить RTL для версии ниже 17?

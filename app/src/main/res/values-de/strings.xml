@@ -10,4 +10,8 @@
     <string name="description_main">da ist niemand der den Schmerz an sich liebt</string>
     <string name="description_second">da ist niemand der den Schmerz an sich liebt</string>
     <string name="description_third">da ist niemand der den Schmerz an sich liebt</string>
+    <string name="choose_size">Icons pro Zeile</string>
+    <string name="choose_theme">Thema</string>
+    <string name="delete">löschen</string>
+    <string name="info">Information</string>
 </resources>

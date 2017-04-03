@@ -10,4 +10,8 @@
     <string name="next">הַבָּא</string>
     <string name="popular">פופולרי</string>
     <string name="standart_size">תקן</string>
+    <string name="choose_size">סמלים לכל שורה</string>
+    <string name="choose_theme">נושא</string>
+    <string name="delete">לִמְחוֹק</string>
+    <string name="info">מֵידָע</string>
 </resources>

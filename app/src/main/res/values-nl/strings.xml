@@ -10,4 +10,8 @@
     <string name="next">Volgende</string>
     <string name="popular">populair</string>
     <string name="standart_size">standaard</string>
+    <string name="choose_size">Pictogrammen per regel</string>
+    <string name="choose_theme">Thema</string>
+    <string name="delete">verwijderen</string>
+    <string name="info">informatie</string>
 </resources>

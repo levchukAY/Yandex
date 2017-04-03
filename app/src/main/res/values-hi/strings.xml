@@ -10,4 +10,8 @@
     <string name="description_main">एसलिये वास्तव सीमित जनित विशेष जाता संस्था गटकउसि आवश्यकत</string>
     <string name="description_second">एसलिये वास्तव सीमित जनित विशेष जाता संस्था गटकउसि आवश्यकत</string>
     <string name="description_third">एसलिये वास्तव सीमित जनित विशेष जाता संस्था गटकउसि आवश्यकत</string>
+    <string name="choose_size">प्रतीक प्रति पंक्ति</string>
+    <string name="choose_theme">थीम</string>
+    <string name="delete">हटाना</string>
+    <string name="info">जानकारी</string>
 </resources>

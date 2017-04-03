@@ -10,4 +10,8 @@
     <string name="description_main">лорэм іпсум долор сіт амэт, пер цліта поссіт эх</string>
     <string name="description_second">лорэм іпсум долор сіт амэт, пер цліта поссіт эх</string>
     <string name="description_third">лорэм іпсум долор сіт амэт, пер цліта поссіт эх</string>
+    <string name="choose_theme">Тэма</string>
+    <string name="choose_size">Значкоў у радку</string>
+    <string name="delete">выдаліць</string>
+    <string name="info">інфармацыя</string>
 </resources>

@@ -40,7 +40,8 @@ public class DesktopActivity extends AppCompatActivity {
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int iconHeight = metrics.widthPixels / cols - 29 * metrics.densityDpi / 160;
+        int iconHeight = (metrics.widthPixels - 8 * metrics.densityDpi / 160) / cols
+                - 16 * metrics.densityDpi / 160;
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         GridLayoutManager layout = new GridLayoutManager(this, cols);

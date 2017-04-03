@@ -7,9 +7,8 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/image_height"
+        android:layout_height="150dp"
         app:srcCompat="@drawable/ic_library"
-        android:id="@+id/imageView"
         android:layout_marginBottom="@dimen/half_margin"
         android:layout_marginTop="@dimen/half_margin" />
 
@@ -17,7 +16,6 @@
         android:text="@string/description_second"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView3"
         android:gravity="center"
         android:layout_marginBottom="@dimen/half_margin"
         android:layout_marginTop="@dimen/half_margin"
