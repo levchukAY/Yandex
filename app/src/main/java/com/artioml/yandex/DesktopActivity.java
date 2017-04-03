@@ -61,6 +61,7 @@ public class DesktopActivity extends AppCompatActivity {
                 getIntent().getIntegerArrayListExtra("popular_keys"),
                 getIntent().getIntegerArrayListExtra("popular_vals"),
                 getIntent().getIntegerArrayListExtra("deleted"),
+                getIntent().getIntegerArrayListExtra("icons"),
                 cols, iconHeight);
         recyclerView.setAdapter(adapter);
 
@@ -104,19 +105,8 @@ public class DesktopActivity extends AppCompatActivity {
     }
 }
 
-
-        /*HashMap<Integer, Integer> icons = new HashMap<>();
-        ArrayList<Integer> nums = new ArrayList<>();
-        for (int i = 0; i < 14; i++)
-            nums.add(i);
-        for (int i = 0; i < 100; i++) {
-            Collections.shuffle(nums);
-            for (int j = 0; j < 14; j++)
-                icons.put(i * 14 + j, nums.get(j));
-        }*/
-
-// inuuutDef
+// IntDef
 // UnderLineSpan
 // SuggestionSpan
 
-// Как устроен цвет Николаев
+// Как устроен цвет. Николаев.

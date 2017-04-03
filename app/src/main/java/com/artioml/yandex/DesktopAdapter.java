@@ -17,21 +17,22 @@ import java.util.Collections;
 
 class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
 
-    private static final int MOD = 20;
+    private static final int MOD = 2000;
 
-    private ArrayList<Integer> popular, newIcons, popularKeys, popularVals, deleted;
+    private ArrayList<Integer> popular, newIcons, popularKeys, popularVals, deleted, icons;
     private ClickList clicked;
     private Context context;
     private int cols, iconHeight;
 
     DesktopAdapter(Context context, ArrayList<Integer> popularKeys, ArrayList<Integer> popularVals,
-                   ArrayList<Integer> deleted ,int cols, int iconHeight) {
+                   ArrayList<Integer> deleted, ArrayList<Integer> icons, int cols, int iconHeight) {
         this.context = context;
         this.cols = cols;
         this.iconHeight = iconHeight;
         this.popularKeys = popularKeys;
         this.popularVals = popularVals;
         this.deleted = deleted;
+        this.icons = icons;
 
         setHasStableIds(true); // for animation
 
@@ -136,20 +137,20 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
             holder.titleTextView.setText(context.getResources().getString(
                     R.string.app_title, popular.get(position - 1) + 1));
             holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, context.getResources().
-                    getIdentifier("ic_" + popular.get(position - 1) % MOD, "drawable", context.getPackageName())));
+                    getIdentifier("ic_" + icons.get(popular.get(position - 1) % MOD), "drawable", context.getPackageName())));
         } else if (position < 2 * cols + 2) {
             position -= cols + 2;
             holder.titleTextView.setText(context.getResources().getString(
                     R.string.app_title, newIcons.get(position) + 1));
             holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, context.getResources().
-                    getIdentifier("ic_" + newIcons.get(position) % MOD, "drawable", context.getPackageName())));
+                    getIdentifier("ic_" + icons.get(newIcons.get(position) % MOD), "drawable", context.getPackageName())));
         } else {
             position -= 2 * cols + 2;
             position = getPosition(position);
             holder.titleTextView.setText(context.getResources().getString(
                     R.string.app_title, position + 1));
             holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, context.getResources().
-                    getIdentifier("ic_" + position % MOD, "drawable", context.getPackageName())));
+                    getIdentifier("ic_" + icons.get(position % MOD), "drawable", context.getPackageName())));
         }
     }
 

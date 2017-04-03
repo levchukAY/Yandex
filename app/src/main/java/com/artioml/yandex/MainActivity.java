@@ -71,12 +71,23 @@ public class MainActivity extends AppCompatActivity {
             else {
                 boolean isLarge = ((RadioButton) findViewById(R.id.radioButton2)).isChecked();
                 boolean isDark = ((RadioButton) findViewById(R.id.radioButton4)).isChecked();
+
+                ArrayList<Integer> nums = new ArrayList<>();
+                for (int i = 0; i < 20; i++)
+                    nums.add(i);
+                ArrayList<Integer> icons = new ArrayList<>();
+                for (int i = 0; i < 100; i++) {
+                    Collections.shuffle(icons);
+                    icons.addAll(nums);
+                }
+
                 Intent desktopIntent = new Intent(MainActivity.this, DesktopActivity.class);
                 desktopIntent.putExtra("size", isLarge);
                 desktopIntent.putExtra("theme", isDark);
                 desktopIntent.putIntegerArrayListExtra("popular_keys", new ArrayList<Integer>());
                 desktopIntent.putIntegerArrayListExtra("popular_vals", new ArrayList<Integer>());
                 desktopIntent.putIntegerArrayListExtra("deleted", new ArrayList<Integer>());
+                desktopIntent.putIntegerArrayListExtra("icons", icons);
                 startActivity(desktopIntent);
                 finish();
             }
