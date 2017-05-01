@@ -18,4 +18,6 @@
 
     <string name="delete">delete</string>
     <string name="info">info</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>

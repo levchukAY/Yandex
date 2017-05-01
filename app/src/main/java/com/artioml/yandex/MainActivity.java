@@ -1,212 +1,143 @@
 package com.artioml.yandex;
 
 import android.content.Intent;
-import android.os.Build;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ViewPager mViewPager;
+    private Map<String, ResolveInfo>  appsMap;
+    private List<ResolveInfo> list;
+    private DesktopFragment desktopFragment;
+    private FavoriteFragment favoriteFragment;
+    private boolean isFavoriteHidden;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if (sharedPreferences.getBoolean("PREF_IS_FIRST", true))
+            startActivity(new Intent(this, StartActivity.class));
+
+        if (sharedPreferences.getBoolean("PREF_IS_DARK", false))
+            setTheme(R.style.AppTheme_Dark);
         setContentView(R.layout.activity_main);
 
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        isFavoriteHidden = sharedPreferences.getBoolean("PREF_HIDE_FAVORITE", false);
 
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        mViewPager.setOnTouchListener(new View.OnTouchListener() {
+        //boolean isLarge = sharedPreferences.getBoolean("PREF_IS_LARGE", false);
+
+        desktopFragment = new DesktopFragment();
+        favoriteFragment = new FavoriteFragment();
+
+        updateAppList();
+        showViewPager();
+
+        PreferenceManager.getDefaultSharedPreferences(this).
+                registerOnSharedPreferenceChangeListener(preferencesChangeListener);
+    }
+
+    void showViewPager() {
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(desktopFragment);
+        adapter.addFragment(favoriteFragment);
+        mViewPager.setAdapter(adapter);
+    }
+
+    void updateAppList() {
+        Intent launcher = new Intent(Intent.ACTION_MAIN);
+        launcher.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        final PackageManager packageManager = getPackageManager();
+        list = packageManager.queryIntentActivities(launcher, 0);
+        Collections.sort(list, new Comparator<ResolveInfo>() {
             @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                // disable swiping
-                return true;
+            public int compare(ResolveInfo info1, ResolveInfo info2) {
+                return info1.loadLabel(packageManager).toString()
+                        .compareTo(info2.loadLabel(packageManager).toString());
             }
         });
 
-        if (Build.VERSION.SDK_INT >= 17)
-            if(getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
-                mViewPager.setRotationY(180);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabDots);
-        tabLayout.setupWithViewPager(mViewPager, true);
-        tabLayout.setClickable(false);
-
-        final Button nextButton = (Button) findViewById(R.id.nextButton);
-        nextButton.setOnClickListener(nextButtonListener);
-    }
-
-    final View.OnClickListener nextButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            int position = mViewPager.getCurrentItem();
-            if (position < 3)
-                mViewPager.setCurrentItem(position + 1);
-            else {
-                boolean isLarge = ((RadioButton) findViewById(R.id.radioButton2)).isChecked();
-                boolean isDark = ((RadioButton) findViewById(R.id.radioButton4)).isChecked();
-
-                ArrayList<Integer> nums1 = new ArrayList<>();
-                ArrayList<Integer> nums2 = new ArrayList<>();
-                for (int i = 0; i < 10; i++) {
-                    nums1.add(i);
-                    nums2.add(i + 10);
-                }
-                ArrayList<Integer> icons = new ArrayList<>();
-                for (int i = 0; i < 100; i++) {
-                    Collections.shuffle(nums1);
-                    Collections.shuffle(nums2);
-                    icons.addAll(nums1);
-                    icons.addAll(nums2);
-                }
-
-                Intent desktopIntent = new Intent(MainActivity.this, DesktopActivity.class);
-                desktopIntent.putIntegerArrayListExtra("popular_keys", new ArrayList<Integer>());
-                desktopIntent.putIntegerArrayListExtra("popular_vals", new ArrayList<Integer>());
-                desktopIntent.putIntegerArrayListExtra("deleted", new ArrayList<Integer>());
-                desktopIntent.putIntegerArrayListExtra("icons", icons);
-                desktopIntent.putExtra("size", isLarge);
-                desktopIntent.putExtra("theme", isDark);
-                startActivity(desktopIntent);
-                finish();
-            }
-        }
-    };
-
-    final CompoundButton.OnCheckedChangeListener onCheckedChangeListener =
-            new CompoundButton.OnCheckedChangeListener() {
-
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    switch (compoundButton.getId()) {
-                        case R.id.radioButton3:
-                            setTheme(R.style.AppTheme);
-                            break;
-                        case R.id.radioButton4:
-                            setTheme(R.style.AppTheme_Dark);
-                            break;
-                    }
-                }
-            };
-
-    public static class PlaceholderFragment extends Fragment {
-
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            int sectionNumber = this.getArguments().getInt(ARG_SECTION_NUMBER);
-            View rootView = null;
-            switch (sectionNumber) {
-                case 0:
-                    rootView = inflater.inflate(R.layout.fragment_1, container, false);
-                    break;
-                case 1:
-                    rootView = inflater.inflate(R.layout.fragment_2, container, false);
-                    break;
-                case 2:
-                    rootView = inflater.inflate(R.layout.fragment_3, container, false);
-                    break;
-                case 3:
-                    rootView = inflater.inflate(R.layout.fragment_4, container, false);
-
-                    break;
-            }
-            if (Build.VERSION.SDK_INT >= 17)
-                if(getResources().getConfiguration().getLayoutDirection() == View.LAYOUT_DIRECTION_RTL)
-                    rootView.setRotationY(180);
-            return rootView;
+        appsMap = new HashMap<>();
+        for (ResolveInfo info : list) {
+            appsMap.put(info.activityInfo.packageName, info);
         }
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    class ViewPagerAdapter extends FragmentPagerAdapter {
 
-        SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        //private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return PlaceholderFragment.newInstance(position);
+            return mFragmentList.get(position);
         }
 
         @Override
         public int getCount() {
-            return 4;
+            if (isFavoriteHidden)
+                return 1;
+            return 2;
+            //return mFragmentList.size();
         }
 
+        /*@Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }*/
+
+        void addFragment(Fragment fragment/*, String title*/) {
+            mFragmentList.add(fragment);
+            //mFragmentTitleList.add(title);
+        }
     }
 
-    public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
-        private static final float MIN_SCALE = 0.85f;
-        private static final float MIN_ALPHA = 0.5f;
+    private SharedPreferences.OnSharedPreferenceChangeListener preferencesChangeListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
 
-        public void transformPage(View view, float position) {
-            int pageWidth = view.getWidth();
-            int pageHeight = view.getHeight();
+                @Override
+                public void onSharedPreferenceChanged(
+                        SharedPreferences sharedPreferences, String key) {
 
-            if (position < -1) { // [-Infinity,-1)
-                // This page is way off-screen to the left.
-                view.setAlpha(0);
-
-            } else if (position <= 1) { // [-1,1]
-                // Modify the default slide transition to shrink the page as well
-                float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
-                float vertMargin = pageHeight * (1 - scaleFactor) / 2;
-                float horzMargin = pageWidth * (1 - scaleFactor) / 2;
-                if (position < 0) {
-                    view.setTranslationX(horzMargin - vertMargin / 2);
-                } else {
-                    view.setTranslationX(-horzMargin + vertMargin / 2);
-                }
-
-                // Scale the page down (between MIN_SCALE and 1)
-                view.setScaleX(scaleFactor);
-                view.setScaleY(scaleFactor);
-
-                // Fade the page relative to its size.
-                view.setAlpha(MIN_ALPHA + (scaleFactor - MIN_SCALE) / (1 - MIN_SCALE) * (1 - MIN_ALPHA));
-
-            } else { // (1,+Infinity]
-                // This page is way off-screen to the right.
-                view.setAlpha(0);
+                    switch (key) {
+                        case "PREF_THEME":
+                            Toast.makeText(MainActivity.this, "theme", Toast.LENGTH_SHORT).show();
+                            if (sharedPreferences.getString("PREF_THEME", "Light").equals("Light"))
+                                MainActivity.this.setTheme(R.style.AppTheme);
+                            else MainActivity.this.setTheme(R.style.AppTheme_Dark);
+                            MainActivity.this.setContentView(R.layout.activity_main);
+                            break;
+                        case "PREF_HIDE_FAVORITE":
+                            isFavoriteHidden = !isFavoriteHidden;
+                            showViewPager();
+                            break;
+                    }
             }
-        }
-    }
-
-    /*public boolean isRTL(Context ctx) {
-        Configuration config = ctx.getResources().getConfiguration();
-        return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
-    }*/
+        };
 
 }

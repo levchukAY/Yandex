@@ -11,8 +11,8 @@
         android:id="@+id/iconImageView"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:background="@drawable/rounded_corners"
         android:padding="2dp" />
+    <!--android:background="@drawable/rounded_corners"-->
 
     <TextView
         android:layout_width="match_parent"
@@ -20,5 +20,5 @@
         android:gravity="center"
         android:textColor="?attr/android:textColorPrimary"
         android:textSize="12sp"
-        android:layout_height="13dp" />
+        android:layout_height="wrap_content" />
 </LinearLayout>

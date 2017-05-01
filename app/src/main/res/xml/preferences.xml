@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Favorites">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:title="Hide favorite apps"
+            android:key="PREF_HIDE_FAVORITE" />
+
+        <Preference
+            android:title="Clear favorite apps list"
+            android:key="PREF_CLEAR_FAVORITE_LIST"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Desktop view">
+
+        <ListPreference
+            android:entries="@array/theme_types"
+            android:entryValues="@array/theme_types"
+            android:key="PREF_THEME"
+            android:title="Theme style"
+            android:persistent="true"
+            android:defaultValue="Light" />
+
+        <ListPreference
+            android:entries="@array/size_types_for_settings"
+            android:entryValues="@array/size_types"
+            android:key="PREF_SIZE"
+            android:title="Icons per line"
+            android:persistent="true"
+            android:defaultValue="4" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Favorites">
+
+        <EditTextPreference
+            android:defaultValue="5"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="URI for show"
+            android:key="PREF_URI_COUNT"
+            android:inputType="number"
+            android:maxLength="2" />
+
+        <Preference
+            android:title="Clear URI list"
+            android:key="PREF_CLEAR_URI_LIST"/>
+    </PreferenceCategory>
+</PreferenceScreen>

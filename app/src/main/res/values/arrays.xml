@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="size_types_for_settings">
+        <item>4 x 6</item>
+        <item>5 x 7</item>
+    </string-array>
+
+    <string-array name="size_types">
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="theme_types">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+</resources>

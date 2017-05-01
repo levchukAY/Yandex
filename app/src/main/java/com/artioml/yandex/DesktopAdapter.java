@@ -1,9 +1,18 @@
 package com.artioml.yandex;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -15,34 +24,81 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
 
-    private static int MOD;
+    //private static int MOD;
 
-    private ArrayList<Integer> popular, newIcons, popularKeys, popularVals, deleted, icons;
-    private ClickList clicked;
+    //private ArrayList<Integer> popular, newIcons, popularKeys, popularVals, deleted, icons;
+    //private ClickList clicked;
+    private List<ResolveInfo> list;
     private Context context;
     private int cols, iconHeight;
 
-    DesktopAdapter(Context context, ArrayList<Integer> popularKeys, ArrayList<Integer> popularVals,
-                   ArrayList<Integer> deleted, ArrayList<Integer> icons, int cols, int iconHeight) {
+    private final PackageManager pm;
+
+    DesktopAdapter(Context context, int cols, int iconHeight) {
         this.context = context;
         this.cols = cols;
         this.iconHeight = iconHeight;
-        this.popularKeys = popularKeys;
+        /*this.popularKeys = popularKeys;
         this.popularVals = popularVals;
         this.deleted = deleted;
-        this.icons = icons;
-        MOD = icons.size();
+        this.icons = icons;*/
+        //MOD = icons.size();
         setHasStableIds(true); // for animation
 
-        clicked = new ClickList(popularKeys, popularVals);
+
+        Intent launcher = new Intent(Intent.ACTION_MAIN);
+        launcher.addCategory(Intent.CATEGORY_LAUNCHER);
+        list = context.getPackageManager().queryIntentActivities(launcher, 0);
+
+        pm = context.getPackageManager();
+
+        Collections.sort(list, new Comparator<ResolveInfo>() {
+            @Override
+            public int compare(ResolveInfo info1, ResolveInfo info2) {
+                return info1.loadLabel(pm).toString().compareTo(info2.loadLabel(pm).toString());
+            }
+        });
+
+        ApplicationInfo ai = pm.getInstalledApplications(PackageManager.GET_META_DATA).get(2);
+
+
+        /*list = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+        Iterator<ApplicationInfo> it = list.iterator();
+        while (it.hasNext()) {
+            ApplicationInfo info= it.next();
+            if ((info.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
+                it.remove();
+        }
+
+        Collections.sort(list, new Comparator<ApplicationInfo>() {
+            @Override
+            public int compare(ApplicationInfo info1, ApplicationInfo info2) {
+                return info1.loadLabel(pm).toString().compareTo(info2.loadLabel(pm).toString());
+            }
+        });
+
+        for (ApplicationInfo packageInfo : list) {
+            Log.d(TAG, "Name :" + packageInfo.loadLabel(pm));
+            Log.d(TAG, "Installed package :" + packageInfo.packageName);
+            Log.d(TAG, "Source dir : " + packageInfo.sourceDir);
+            Log.d(TAG, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
+        }*/
+
+        /*clicked = new ClickList(popularKeys, popularVals);
         popular = getPopular();
 
         newIcons = new ArrayList<>();
         for (int i = 0; i < cols; i++)
-            newIcons.add(getPosition(i));
+            newIcons.add(getPosition(i));*/
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -68,7 +124,14 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
                         String title = titleTextView.getText().toString();
                         Toast toast = Toast.makeText(context, title, Toast.LENGTH_SHORT);
                         toast.show();
-                        clicked.add(Integer.parseInt(title, 16) - 1);
+
+                        if (position > 2 * cols + 1) {
+                            ResolveInfo info = list.get(position - 2 * cols - 2);
+                            context.startActivity(
+                                    pm.getLaunchIntentForPackage(info.activityInfo.packageName));
+                        }
+
+                        //clicked.add(Integer.parseInt(title, 16) - 1);
                     }
                 });
 
@@ -88,6 +151,11 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
                                 String title = titleTextView.getText().toString();
                                 Toast toast = Toast.makeText(context, title, Toast.LENGTH_SHORT);
                                 toast.show();
+
+                                if (position > 2 * cols + 1) {
+                                    ResolveInfo info = list.get(position - 2 * cols - 2);
+                                }
+
                                 return true;
                             }
                         }
@@ -98,12 +166,20 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
                             new MenuItem.OnMenuItemClickListener() {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem menuItem) {
-                                    String title = titleTextView.getText().toString();
+                                    ResolveInfo info = list.get(position - 2 * cols - 2);
+                                    Intent intent = new Intent(Intent.ACTION_DELETE);
+                                    intent.setData(Uri.parse("package:" + info.activityInfo.packageName));
+                                    context.startActivity(intent);
+                                    list.remove(info);
+                                    notifyDataSetChanged();
+                                    //Toast.makeText(context, info.activityInfo.packageName, Toast.LENGTH_SHORT).show();
+
+                                    /*String title = titleTextView.getText().toString();
                                     int n = Integer.parseInt(title, 16) - 1;
                                     clicked.rem(n);
                                     deleted.add(n);
                                     Collections.sort(deleted);
-                                    DesktopAdapter.this.notifyDataSetChanged();
+                                    DesktopAdapter.this.notifyDataSetChanged();*/
                                     return true;
                                 }
                             }
@@ -140,29 +216,36 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
         else if (position == cols + 1)
             holder.titleTextView.setText(context.getResources().getString(R.string.new_apps));
         else if (position <= cols) {
-            holder.titleTextView.setText(context.getResources().getString(
+            /*holder.titleTextView.setText(context.getResources().getString(
                     R.string.app_title, popular.get(position - 1) + 1));
             holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, context.getResources().
-                    getIdentifier("ic_" + icons.get(popular.get(position - 1) % MOD), "drawable", context.getPackageName())));
+                    getIdentifier("ic_" + icons.get(popular.get(position - 1) % MOD), "drawable", context.getPackageName())));*/
         } else if (position < 2 * cols + 2) {
-            position -= cols + 2;
+            /*position -= cols + 2;
             holder.titleTextView.setText(context.getResources().getString(
                     R.string.app_title, newIcons.get(position) + 1));
             holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, context.getResources().
-                    getIdentifier("ic_" + icons.get(newIcons.get(position) % MOD), "drawable", context.getPackageName())));
+                    getIdentifier("ic_" + icons.get(newIcons.get(position) % MOD), "drawable", context.getPackageName())));*/
         } else {
             position -= 2 * cols + 2;
-            position = getPosition(position);
-            holder.titleTextView.setText(context.getResources().getString(
-                    R.string.app_title, position + 1));
-            holder.iconImageView.setImageDrawable(ContextCompat.getDrawable(context, context.getResources().
-                    getIdentifier("ic_" + icons.get(position % MOD), "drawable", context.getPackageName())));
+            ResolveInfo info = list.get(position);
+            //ApplicationInfo info = list.get(position);
+            //holder.titleTextView.setText(info.loadLabel(pm));
+            //holder.iconImageView.setImageDrawable(info.loadIcon(pm));
+            /*Context context = null;
+
+                context = this.context.createPackageContext(info.packageName, 0);
+                holder.iconImageView.setImageDrawable(context.getResources().getDrawable(info.getIconResource()));
+                holder.titleTextView.setText(info.resolvePackageName);*/
+            holder.iconImageView.setImageDrawable(info.loadIcon(pm));
+            holder.titleTextView.setText(info.loadLabel(pm));
         }
     }
 
     @Override
     public int getItemCount() {
-        return Integer.MAX_VALUE;
+        //return Integer.MAX_VALUE;
+        return list.size() + 2 * cols + 2;
     }
 
     @Override
@@ -176,13 +259,13 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
     public long getItemId(int position) { // for animation
          if (position > 2 * cols + 1) {
              position -= 2 * cols + 2;
-             position = getPosition(position);
+             //position = getPosition(position);
              return position;
          }
          return 0;
     }
 
-    private ArrayList<Integer> getPopular() {
+    /*private ArrayList<Integer> getPopular() {
         ArrayList<Integer> res = new ArrayList<>();
         for (int i = 0; res.size() != cols && i < clicked.size(); i++)
             res.add(clicked.get(i).id);
@@ -202,35 +285,14 @@ class DesktopAdapter extends RecyclerView.Adapter<DesktopAdapter.ViewHolder> {
             popularKeys.add(i.id);
             popularVals.add(i.count);
         }
-    }
+    }*/
 
-    private int getPosition(int position) {
+    /*private int getPosition(int position) {
         for (int i : deleted)
             if (position >= i)
                 position++;
             else return position;
         return position;
-    }
+    }*/
 
 }
-
-// локализация
-
-// темная тема
-// добавить delete во все случаи (не надо)
-// убрать обновление для new
-//+ бесконечный скроллинг? (integer maxsize)
-//+ можно ли назад передвигаться между фрагментами и активити? (только по кнопке) (finish in intent)
-//+ языки - нет цифр? (фарси)
-//+ можно ли с нуля нумеровать (только с 1)
-//+ как отличить сворачивание от поворота? (считаем, что одно и то же)
-//+ цвета в темах? (установить textAppearance)
-
-
-// Как сделать некриво?
-// закругленные иконки
-//+ как запоминать популярные? (Shared)
-// числа в 16сс в персидском
-// как определить RTL для версии ниже 17?
-// + сменить перелистывания фрагментов для RTL?
-//+ как сделать квадратные ячейки? (custom view)
