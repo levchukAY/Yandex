@@ -83,8 +83,8 @@ public class StartActivity extends AppCompatActivity {
                 sharedPreferences
                         .edit()
                         .putBoolean("PREF_IS_FIRST", false)
-                        .putBoolean("PREF_IS_DARK", isDark)
-                        .putBoolean("PREF_IS_LARGE", isLarge)
+                        .putString("PREF_THEME", isDark ? "Dark" : "Light")
+                        .putString("PREF_SIZE", isLarge ? "5" : "4")
                         .apply();
 
                 /*Intent desktopIntent = new Intent(StartActivity.this, DesktopActivity.class);

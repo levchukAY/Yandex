@@ -28,6 +28,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Favorites.COLUMN_APP + " TEXT NOT NULL);";
         sqLiteDatabase.execSQL(HISTORY_TABLE_SQL);
 
+        final String POPULAR_APPS_TABLE_SQL = "CREATE TABLE " + PopularApps.TABLE_NAME +"(" +
+                PopularApps._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                PopularApps.COLUMN_APP + " TEXT NOT NULL, " +
+                PopularApps.COLUMN_COUNT + " INTEGER);";
+        sqLiteDatabase.execSQL(POPULAR_APPS_TABLE_SQL);
+
         /*final String HISTORY_TABLE_SQL = "CREATE TABLE " + History.TABLE_NAME +"(" +
                 History._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 History.COLUMN_PUNCH_TYPE + " INTEGER NOT NULL, " +

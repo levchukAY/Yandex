@@ -16,13 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.lang.reflect.Field;
 
 public class DesktopFragment extends Fragment {
 
     private View view;
+    private DesktopAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -35,13 +35,18 @@ public class DesktopFragment extends Fragment {
 
         int cols = Integer.parseInt(sharedPreferences.getString("PREF_SIZE", "4"));
         setRecyclerView(cols);
-
         setSwipeRefresh();
 
         PreferenceManager.getDefaultSharedPreferences(getActivity()).
                 registerOnSharedPreferenceChangeListener(preferencesChangeListener);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateAppList();
     }
 
     private void setRecyclerView(int cols) {
@@ -56,8 +61,8 @@ public class DesktopFragment extends Fragment {
                 - 16 * metrics.densityDpi / 160;
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        GridLayoutManager layout = new GridLayoutManager(getActivity(), cols);
 
+        GridLayoutManager layout = new GridLayoutManager(getActivity(), cols);
         layout.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -66,10 +71,9 @@ public class DesktopFragment extends Fragment {
                 return 1;
             }
         });
-
         recyclerView.setLayoutManager(layout);
 
-        DesktopAdapter adapter = new DesktopAdapter(getActivity(), cols, iconHeight);
+        adapter = new DesktopAdapter(getActivity(), cols, iconHeight);
         recyclerView.setAdapter(adapter);
 
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -77,28 +81,14 @@ public class DesktopFragment extends Fragment {
             Paint paint = new Paint();
 
             public void onDraw(Canvas canvas, RecyclerView parent, RecyclerView.State state) {
+                paint.setColor(getResources().getColor(R.color.colorAccent));
                 for (int i = 0; i < parent.getChildCount(); i++) {
                     View child = parent.getChildAt(i);
                     int position = parent.getChildAdapterPosition(child);
                     if (position == finalCols + 2)
-                        drawBackground(canvas, parent, i);
-
+                        canvas.drawRect(parent.getLeft(), parent.getChildAt(i).getBottom(),
+                                parent.getRight(), parent.getChildAt(i).getBottom() + 5, paint);
                 }
-            }
-
-            private void drawBackground(Canvas canvas, RecyclerView parent, int index) {
-                int l = parent.getLeft();
-                int r = parent.getRight();
-                int t = parent.getChildAt(index).getBottom();
-                int b = parent.getChildAt(index).getBottom() + 5;
-                //(int) getResources().getDimensionPixelOffset(R.dimen.fourth_margin);
-                drawBackground(canvas, l, t, r, b);
-            }
-
-            private void drawBackground(Canvas c, int l, int t, int r, int b) {
-                //paint.setShader(new LinearGradient(l, t, r, b, Color.RED, Color.BLUE, Shader.TileMode.CLAMP));
-                paint.setColor(getResources().getColor(R.color.colorAccent));
-                c.drawRect(l, t, r, b, paint);
             }
 
         });
@@ -114,10 +104,10 @@ public class DesktopFragment extends Fragment {
                 startActivity(new Intent(getActivity(), SettingsActivity.class));
             }
         });
-        setCustomInicator(mSwipeRefresh);
+        setCustomIndicator(mSwipeRefresh);
     }
 
-    private void setCustomInicator(SwipeRefreshLayout mSwipeRefresh) {
+    private void setCustomIndicator(SwipeRefreshLayout mSwipeRefresh) {
         try {
             Field f = mSwipeRefresh.getClass().getDeclaredField("mCircleView");
             f.setAccessible(true);
@@ -128,6 +118,10 @@ public class DesktopFragment extends Fragment {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    void updateAppList() {
+        adapter.loadAppList();
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener preferencesChangeListener =

@@ -4,14 +4,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,7 +38,8 @@ public class FavoriteFragment extends Fragment {
     private ArrayList<String> recentRequests;
     private int itemsToShow;
     private AutoCompleteTextView textView;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<String> arrayAdapter;
+    private FavoriteAppsAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -44,21 +47,19 @@ public class FavoriteFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
 
-        /*RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.view_favorites);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity().getBaseContext());
-        mRecyclerView.setLayoutManager(layoutManager);
-        //userAdapter = new UserAdapter(getActivity(), onUserClickListener);
-        //mRecyclerView.setAdapter(userAdapter);*/
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         itemsToShow = Integer.parseInt("0" + sharedPreferences.getString("PREF_URI_COUNT", "5"));
-
         db = new DatabaseHelper(getActivity()).getWritableDatabase();
         loadResentRequests();
 
+        int cols = Integer.parseInt(sharedPreferences.getString("PREF_SIZE", "4"));
+        setRecyclerView(cols, view);
+
         textView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, recentRequests);
-        textView.setAdapter(adapter);
+        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, recentRequests);
+        textView.setAdapter(arrayAdapter);
         textView.setOnTouchListener(new View.OnTouchListener(){
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -77,35 +78,25 @@ public class FavoriteFragment extends Fragment {
         return view;
     }
 
-    TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
-        @Override
-        public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-            ((InputMethodManager) getActivity().getSystemService(
-                    Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
-                    getView().getWindowToken(), 0);
-
-            String currentQuery = textView.getText().toString().trim();
-
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(currentQuery)));
-                updateHistory(currentQuery);
-            } catch (Exception e) {
-                Toast.makeText(getActivity(), "Invalid URI", Toast.LENGTH_SHORT).show();
-            } finally {
-                textView.setText("");
-            }
-            return true;
-        }
-    };
-
-    public void updateHistory(String uri) {
-        ContentValues cv = new ContentValues();
-        cv.put(RecentRequests.COLUMN_REQUEST, uri);
-        db.insert(RecentRequests.TABLE_NAME, null, cv);
-
-        adapter.clear();
+    @Override
+    public void onResume() {
+        super.onResume();
         loadResentRequests();
-        adapter.addAll(recentRequests);
+        updateFavoriteApps();
+    }
+
+    private void setRecyclerView(int cols, View view) {
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+            cols += 2;
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.view_favorites);
+
+        GridLayoutManager layout = new GridLayoutManager(getActivity(), cols);
+        recyclerView.setLayoutManager(layout);
+
+        adapter = new FavoriteAppsAdapter(getActivity(), cols);
+        recyclerView.setAdapter(adapter);
     }
 
     private void setSwipeRefresh(View view) {
@@ -115,6 +106,7 @@ public class FavoriteFragment extends Fragment {
             @Override
             public void onRefresh() {
                 mSwipeRefresh.setRefreshing(false);
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
             }
         });
         setCustomIndicator(mSwipeRefresh);
@@ -142,10 +134,47 @@ public class FavoriteFragment extends Fragment {
 
         recentRequests = new ArrayList<>();
         while (cursor.moveToNext() && recentRequests.size() < itemsToShow) {
-            recentRequests.add(cursor.getString(cursor.getColumnIndex(RecentRequests.COLUMN_REQUEST)));
+            recentRequests.add(
+                    cursor.getString(cursor.getColumnIndex(RecentRequests.COLUMN_REQUEST)));
         }
         cursor.close();
     }
+
+    public void updateHistory(String uri) {
+        ContentValues cv = new ContentValues();
+        cv.put(RecentRequests.COLUMN_REQUEST, uri);
+        db.insert(RecentRequests.TABLE_NAME, null, cv);
+
+        arrayAdapter.clear();
+        loadResentRequests();
+        arrayAdapter.addAll(recentRequests);
+    }
+
+    public void updateFavoriteApps() {
+        adapter.loadInstalledApps();
+        adapter.loadFavoriteApps();
+    }
+
+    TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+            ((InputMethodManager) getActivity().getSystemService(
+                    Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+                    getView().getWindowToken(), 0);
+
+            String currentQuery = textView.getText().toString().trim();
+
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(currentQuery)));
+                updateHistory(currentQuery);
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), "Invalid URI", Toast.LENGTH_SHORT).show();
+            } finally {
+                textView.setText("");
+            }
+            return true;
+        }
+    };
 
     private SharedPreferences.OnSharedPreferenceChangeListener preferencesChangeListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -157,9 +186,9 @@ public class FavoriteFragment extends Fragment {
                     switch (key) {
                         case "PREF_URI_COUNT":
                             itemsToShow = Integer.parseInt("0" + sharedPreferences.getString("PREF_URI_COUNT", "5"));
-                            adapter.clear();
+                            arrayAdapter.clear();
                             loadResentRequests();
-                            adapter.addAll(recentRequests);
+                            arrayAdapter.addAll(recentRequests);
                             break;
                     }
                 }

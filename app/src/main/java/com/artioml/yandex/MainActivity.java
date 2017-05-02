@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,8 +24,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Map<String, ResolveInfo>  appsMap;
-    private List<ResolveInfo> list;
+    //private Map<String, ResolveInfo>  appsMap;
+    //private List<ResolveInfo> list;
     private DesktopFragment desktopFragment;
     private FavoriteFragment favoriteFragment;
     private boolean isFavoriteHidden;
@@ -38,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
         if (sharedPreferences.getBoolean("PREF_IS_FIRST", true))
             startActivity(new Intent(this, StartActivity.class));
 
-        if (sharedPreferences.getBoolean("PREF_IS_DARK", false))
+        if (sharedPreferences.getString("PREF_THEME", "Light").equals("Dark"))
             setTheme(R.style.AppTheme_Dark);
+        else setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_main);
 
         isFavoriteHidden = sharedPreferences.getBoolean("PREF_HIDE_FAVORITE", false);
@@ -49,12 +51,22 @@ public class MainActivity extends AppCompatActivity {
         desktopFragment = new DesktopFragment();
         favoriteFragment = new FavoriteFragment();
 
-        updateAppList();
+        //updateAppList();
         showViewPager();
 
         PreferenceManager.getDefaultSharedPreferences(this).
                 registerOnSharedPreferenceChangeListener(preferencesChangeListener);
     }
+
+    /*@Override
+    protected void onResume() {
+        super.onResume();
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("PREF_THEME", "Light").equals("Dark"))
+            setTheme(R.style.AppTheme_Dark);
+        else setTheme(R.style.AppTheme);
+        setContentView(R.layout.activity_main);
+    }*/
 
     void showViewPager() {
         ViewPager mViewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -64,7 +76,16 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(adapter);
     }
 
-    void updateAppList() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            desktopFragment.updateAppList();
+            favoriteFragment.updateFavoriteApps();
+        }
+    }
+
+    /*void updateAppList() {
         Intent launcher = new Intent(Intent.ACTION_MAIN);
         launcher.addCategory(Intent.CATEGORY_LAUNCHER);
 
@@ -82,6 +103,10 @@ public class MainActivity extends AppCompatActivity {
         for (ResolveInfo info : list) {
             appsMap.put(info.activityInfo.packageName, info);
         }
+    }*/
+
+    public void updateFavoriteApps() {
+        favoriteFragment.updateFavoriteApps();
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -126,11 +151,12 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (key) {
                         case "PREF_THEME":
-                            Toast.makeText(MainActivity.this, "theme", Toast.LENGTH_SHORT).show();
+                            MainActivity.this.recreate();
+                            /*Toast.makeText(MainActivity.this, "theme", Toast.LENGTH_SHORT).show();
                             if (sharedPreferences.getString("PREF_THEME", "Light").equals("Light"))
                                 MainActivity.this.setTheme(R.style.AppTheme);
                             else MainActivity.this.setTheme(R.style.AppTheme_Dark);
-                            MainActivity.this.setContentView(R.layout.activity_main);
+                            MainActivity.this.setContentView(R.layout.activity_main);*/
                             break;
                         case "PREF_HIDE_FAVORITE":
                             isFavoriteHidden = !isFavoriteHidden;
@@ -141,3 +167,28 @@ public class MainActivity extends AppCompatActivity {
         };
 
 }
+
+/* Cursor cursor = db.query(
+                                Favorites.TABLE_NAME,
+                                new String[] {Favorites.COLUMN_APP},
+                                Favorites.COLUMN_APP + " = ? ",
+                                new String[] {app}, null, null, null);
+                        int size = cursor.getCount();
+
+                        if (size == 0) {
+                            ContentValues cv = new ContentValues();
+                            cv.put(PopularApps.COLUMN_APP, app);
+                            cv.put(PopularApps.COLUMN_COUNT, 1);
+                            db.insert(PopularApps.TABLE_NAME, null, cv);
+                            Log.d("QWERTYU", "NEW");
+                        } else {
+                            cursor.moveToNext();
+                            int count = cursor.getInt(cursor.getColumnIndex(PopularApps.COLUMN_COUNT));
+                            ContentValues cv = new ContentValues();
+                            cv.put(PopularApps.COLUMN_COUNT, count + 1);
+                            db.update(PopularApps.TABLE_NAME, cv,
+                                    PopularApps.COLUMN_APP + " = ? ", new String[] {app});
+                            Log.d("QWERTYU", "UPDATE");
+                        }
+
+cursor.close();*/

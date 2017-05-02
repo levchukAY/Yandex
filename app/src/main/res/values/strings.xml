@@ -16,8 +16,10 @@
     <string name="new_apps">new</string>
     <string name="popular">popular</string>
 
-    <string name="delete">delete</string>
-    <string name="info">info</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_info">Info</string>
+    <string name="menu_add_to_favorites" translatable="false">Add to favorites</string>
+    <string name="menu_delete_from_favorites" translatable="false">Delete from favorites</string>
+
     <string name="action_settings">Settings</string>
 </resources>

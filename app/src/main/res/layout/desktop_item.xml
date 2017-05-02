@@ -12,13 +12,15 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:padding="2dp" />
-    <!--android:background="@drawable/rounded_corners"-->
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/titleTextView"
         android:gravity="center"
         android:textColor="?attr/android:textColorPrimary"
         android:textSize="12sp"
-        android:layout_height="wrap_content" />
+        android:scrollHorizontally="true"
+        android:ellipsize="end"
+        android:maxLines="1" />
 </LinearLayout>

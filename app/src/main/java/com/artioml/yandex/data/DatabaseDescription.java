@@ -18,4 +18,12 @@ public class DatabaseDescription {
         public final static String COLUMN_APP = "app";
     }
 
+    public static final class PopularApps implements BaseColumns {
+        public final static String TABLE_NAME = "PopularApps";
+
+        public final static String _ID = BaseColumns._ID;
+        public final static String COLUMN_APP = "app";
+        public final static String COLUMN_COUNT = "count";
+    }
+
 }

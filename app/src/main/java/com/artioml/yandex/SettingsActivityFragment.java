@@ -18,12 +18,11 @@ public class SettingsActivityFragment extends PreferenceFragment {
 
         findPreference("PREF_CLEAR_FAVORITE_LIST")
                 .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                /*Toast.makeText(getActivity(), "nbgfvd", Toast.LENGTH_SHORT).show();
-                SQLiteDatabase db = new DatabaseHelper(getActivity()).getWritableDatabase();
-                db.delete(DatabaseDescription.RecentRequests.TABLE_NAME, null, null);*/
-                return true;
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        SQLiteDatabase db = new DatabaseHelper(getActivity()).getWritableDatabase();
+                        db.delete(DatabaseDescription.Favorites.TABLE_NAME, null, null);
+                        return true;
             }
         });
 
@@ -31,7 +30,6 @@ public class SettingsActivityFragment extends PreferenceFragment {
                 .setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                     @Override
                     public boolean onPreferenceClick(Preference preference) {
-                        Toast.makeText(getActivity(), "nbgfvd", Toast.LENGTH_SHORT).show();
                         SQLiteDatabase db = new DatabaseHelper(getActivity()).getWritableDatabase();
                         db.delete(DatabaseDescription.RecentRequests.TABLE_NAME, null, null);
                         return true;
