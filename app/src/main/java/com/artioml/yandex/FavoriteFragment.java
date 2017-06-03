@@ -10,10 +10,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -26,17 +31,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.artioml.yandex.data.DatabaseDescription.*;
+import com.artioml.yandex.data.DatabaseDescription.RecentRequests;
 import com.artioml.yandex.data.DatabaseHelper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-public class FavoriteFragment extends Fragment {
+public class FavoriteFragment extends Fragment
+        //implements LoaderManager.LoaderCallbacks<Cursor>
+{
 
-    private SQLiteDatabase db;
+    private static final int REQUESTS_LOADER = 0; // Идентификатор Loader
+
     private ArrayList<String> recentRequests;
-    private int itemsToShow;
     private AutoCompleteTextView textView;
     private ArrayAdapter<String> arrayAdapter;
     private FavoriteAppsAdapter adapter;
@@ -50,15 +57,17 @@ public class FavoriteFragment extends Fragment {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        itemsToShow = Integer.parseInt("0" + sharedPreferences.getString("PREF_URI_COUNT", "5"));
-        db = new DatabaseHelper(getActivity()).getWritableDatabase();
+        //itemsToShow = Integer.parseInt("0" + sharedPreferences.getString("PREF_URI_COUNT", "5"));
+        //db = new DatabaseHelper(getActivity()).getWritableDatabase();
         loadResentRequests();
 
         int cols = Integer.parseInt(sharedPreferences.getString("PREF_SIZE", "4"));
         setRecyclerView(cols, view);
 
+        recentRequests = new ArrayList<>();
         textView = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
-        arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, recentRequests);
+        arrayAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, recentRequests);
         textView.setAdapter(arrayAdapter);
         textView.setOnTouchListener(new View.OnTouchListener(){
             @Override
@@ -72,8 +81,9 @@ public class FavoriteFragment extends Fragment {
 
         setSwipeRefresh(view);
 
-        PreferenceManager.getDefaultSharedPreferences(getActivity()).
-                registerOnSharedPreferenceChangeListener(preferencesChangeListener);
+        PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .registerOnSharedPreferenceChangeListener(preferencesChangeListener);
 
         return view;
     }
@@ -81,7 +91,8 @@ public class FavoriteFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadResentRequests();
+        //loadResentRequests();
+        //getLoaderManager().initLoader(REQUESTS_LOADER, null, FavoriteFragment.this);
         updateFavoriteApps();
     }
 
@@ -126,14 +137,14 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void loadResentRequests() {
-        Cursor cursor = db.query(
+        Cursor cursor = new DatabaseHelper(getActivity()).getReadableDatabase().query(
                 RecentRequests.TABLE_NAME,
                 new String[] {RecentRequests.COLUMN_REQUEST},
                 null, null, null, null,
                 RecentRequests._ID + " DESC");
 
         recentRequests = new ArrayList<>();
-        while (cursor.moveToNext() && recentRequests.size() < itemsToShow) {
+        while (cursor.moveToNext()) {
             recentRequests.add(
                     cursor.getString(cursor.getColumnIndex(RecentRequests.COLUMN_REQUEST)));
         }
@@ -141,13 +152,30 @@ public class FavoriteFragment extends Fragment {
     }
 
     public void updateHistory(String uri) {
-        ContentValues cv = new ContentValues();
-        cv.put(RecentRequests.COLUMN_REQUEST, uri);
-        db.insert(RecentRequests.TABLE_NAME, null, cv);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(RecentRequests.COLUMN_REQUEST, uri);
+
+        Log.d("TAG_FRAGMENT", "before insert");
+        Uri newContactUri = getActivity().getContentResolver().insert(
+                RecentRequests.CONTENT_URI, contentValues);
+        Log.d("TAG_FRAGMENT", "after insert");
+
+        //getLoaderManager().initLoader(REQUESTS_LOADER, null, this);
+
+        if (newContactUri == null) {
+            /*Snackbar.make(coordinatorLayout,
+                    R.string.contact_not_added, Snackbar.LENGTH_LONG).show();*/
+        }
 
         arrayAdapter.clear();
         loadResentRequests();
         arrayAdapter.addAll(recentRequests);
+        //db.insert(RecentRequests.TABLE_NAME, null, cv);
+
+        /*arrayAdapter.clear();
+        //loadResentRequests();
+        getLoaderManager().initLoader(REQUESTS_LOADER, null, this);
+        arrayAdapter.addAll(recentRequests);*/
     }
 
     public void updateFavoriteApps() {
@@ -185,12 +213,55 @@ public class FavoriteFragment extends Fragment {
 
                     switch (key) {
                         case "PREF_URI_COUNT":
-                            itemsToShow = Integer.parseInt("0" + sharedPreferences.getString("PREF_URI_COUNT", "5"));
+                            /*itemsToShow = Integer.parseInt("0" + sharedPreferences.getString("PREF_URI_COUNT", "5"));
                             arrayAdapter.clear();
-                            loadResentRequests();
-                            arrayAdapter.addAll(recentRequests);
+                            //getLoaderManager().initLoader(REQUESTS_LOADER, null, FavoriteFragment.this);
+                            arrayAdapter.addAll(recentRequests);*/
                             break;
                     }
                 }
             };
+
+    /*// Инициализация Loader при создании активности этого фрагмента
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(REQUESTS_LOADER, null, this);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case REQUESTS_LOADER:
+                Log.d("TAG_FRAGMENT", "REQUESTS_LOADER");
+                return new CursorLoader(getActivity(),
+                        RecentRequests.CONTENT_URI, // Uri таблицы contacts
+                        null, // все столбцы
+                        null, // все записи
+                        null, // без аргументов
+                        RecentRequests._ID + " DESC"); // сортировка
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.d("TAG_FRAGMENT", "onLoadFinished " + data.getCount());
+        arrayAdapter.clear();
+        recentRequests = new ArrayList<>();
+        while (data.moveToNext()) {
+            recentRequests.add(
+                    data.getString(data.getColumnIndex(RecentRequests.COLUMN_REQUEST)));
+        }
+        Log.d("TAG_FRAGMENT", recentRequests.toString());
+        arrayAdapter.addAll(recentRequests);
+
+        //loadResentRequests(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+    }*/
 }

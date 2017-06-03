@@ -15,8 +15,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (PreferenceManager.getDefaultSharedPreferences(this)
                 .getString("PREF_THEME", "Light").equals("Dark"))
             setTheme(R.style.AppTheme_Dark);
-        else
-            setTheme(R.style.AppTheme);
+        else setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_settings);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

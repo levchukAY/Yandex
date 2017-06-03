@@ -192,10 +192,4 @@ public class StartActivity extends AppCompatActivity {
             }
         }
     }
-
-    /*public boolean isRTL(Context ctx) {
-        Configuration config = ctx.getResources().getConfiguration();
-        return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
-    }*/
-
 }

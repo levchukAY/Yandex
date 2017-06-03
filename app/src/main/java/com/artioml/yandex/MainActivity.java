@@ -24,8 +24,6 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    //private Map<String, ResolveInfo>  appsMap;
-    //private List<ResolveInfo> list;
     private DesktopFragment desktopFragment;
     private FavoriteFragment favoriteFragment;
     private boolean isFavoriteHidden;
@@ -84,26 +82,6 @@ public class MainActivity extends AppCompatActivity {
             favoriteFragment.updateFavoriteApps();
         }
     }
-
-    /*void updateAppList() {
-        Intent launcher = new Intent(Intent.ACTION_MAIN);
-        launcher.addCategory(Intent.CATEGORY_LAUNCHER);
-
-        final PackageManager packageManager = getPackageManager();
-        list = packageManager.queryIntentActivities(launcher, 0);
-        Collections.sort(list, new Comparator<ResolveInfo>() {
-            @Override
-            public int compare(ResolveInfo info1, ResolveInfo info2) {
-                return info1.loadLabel(packageManager).toString()
-                        .compareTo(info2.loadLabel(packageManager).toString());
-            }
-        });
-
-        appsMap = new HashMap<>();
-        for (ResolveInfo info : list) {
-            appsMap.put(info.activityInfo.packageName, info);
-        }
-    }*/
 
     public void updateFavoriteApps() {
         favoriteFragment.updateFavoriteApps();
@@ -167,28 +145,3 @@ public class MainActivity extends AppCompatActivity {
         };
 
 }
-
-/* Cursor cursor = db.query(
-                                Favorites.TABLE_NAME,
-                                new String[] {Favorites.COLUMN_APP},
-                                Favorites.COLUMN_APP + " = ? ",
-                                new String[] {app}, null, null, null);
-                        int size = cursor.getCount();
-
-                        if (size == 0) {
-                            ContentValues cv = new ContentValues();
-                            cv.put(PopularApps.COLUMN_APP, app);
-                            cv.put(PopularApps.COLUMN_COUNT, 1);
-                            db.insert(PopularApps.TABLE_NAME, null, cv);
-                            Log.d("QWERTYU", "NEW");
-                        } else {
-                            cursor.moveToNext();
-                            int count = cursor.getInt(cursor.getColumnIndex(PopularApps.COLUMN_COUNT));
-                            ContentValues cv = new ContentValues();
-                            cv.put(PopularApps.COLUMN_COUNT, count + 1);
-                            db.update(PopularApps.TABLE_NAME, cv,
-                                    PopularApps.COLUMN_APP + " = ? ", new String[] {app});
-                            Log.d("QWERTYU", "UPDATE");
-                        }
-
-cursor.close();*/
